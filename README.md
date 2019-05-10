@@ -1,6 +1,6 @@
 # HA Mongo with bitnami mongo images
 
-This is a repo showing an example configuration (for docker compose and helm) to run a HA production mongo setup.
+This is a repo showing an example configuration (for docker compose and helm) to run a HA production mongo setup. The example use `mongo 3.6.8` since we have used this release and had no issues with it.
 
 # docker-compose
 
@@ -69,3 +69,8 @@ diff <(cat ./values.yml) <(curl -s https://raw.githubusercontent.com/helm/charts
 ---
 >   # key: key
 ```
+
+# k8s nodes notes
+
+* Make sure [THP is switched off](https://docs.mongodb.com/v3.6/tutorial/transparent-huge-pages/) on the node holding the mongo pods.
+* Make sure the persistent disks used for mongo are formatted with XFS 
