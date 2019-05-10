@@ -1,0 +1,47 @@
+---
+version: '3'
+services:
+  mongodb-primary:
+    image: bitnami/mongodb:3.6.8
+    ports:
+      - '27020:27017'
+    volumes:
+      - ./db/primary:/bitnami
+    environment:
+      - MONGODB_ROOT_PASSWORD=test
+      - MONGODB_USERNAME=sessionstack
+      - MONGODB_PASSWORD=test
+      - MONGODB_DATABASE=sessionstack
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_NAME=sessionstack-main
+      - MONGODB_REPLICA_SET_KEY=replicasetkeypass
+  mongodb-secondary:
+    image: bitnami/mongodb:3.6.8
+    depends_on:
+      - mongodb-primary
+    ports:
+      - '27021:27017'
+    volumes:
+      - ./db/secondary:/bitnami
+    environment:
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_REPLICA_SET_NAME=sessionstack-main
+      - MONGODB_REPLICA_SET_KEY=replicasetkeypass
+      - MONGODB_PRIMARY_HOST=mongodb-primary
+      - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_PRIMARY_ROOT_PASSWORD=test
+  mongodb-arbiter:
+    image: bitnami/mongodb:3.6.8
+    depends_on:
+      - mongodb-primary
+    ports:
+      - '27022:27017'
+    volumes:
+      - ./db/arbiter:/bitnami
+    environment:
+      - MONGODB_REPLICA_SET_MODE=arbiter
+      - MONGODB_REPLICA_SET_NAME=sessionstack-main
+      - MONGODB_REPLICA_SET_KEY=replicasetkeypass
+      - MONGODB_PRIMARY_HOST=mongodb-primary
+      - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_PRIMARY_ROOT_PASSWORD=test
